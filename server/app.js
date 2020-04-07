@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 app.use('/css', express.static(path.join(__dirname, '../src/css')));
 app.use('/img', express.static(path.join(__dirname, '../src/img')));
 
-const knownPaths = ['/'];
+const knownPaths = ['/', '/quiz', '/settings', '/results'];
 for (const webPath of knownPaths) {
   app.use(webPath, express.static('./dist', {
     index: 'app.html',
