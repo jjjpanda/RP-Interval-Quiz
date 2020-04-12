@@ -28,7 +28,7 @@ let intervals = [
     {semitones: 9, ratio: Math.pow(semitone, 9), probability: 0, cProbability: 0, direction: "ascending", name: "major sixth"},
     {semitones: 10, ratio: Math.pow(semitone, 10), probability: 0, cProbability: 0, direction: "ascending", name: "minor seventh"},
     {semitones: 11, ratio: Math.pow(semitone, 11), probability: 0, cProbability: 0, direction: "ascending", name: "major seventh"},
-    {semitones: 12, ratio: Math.pow(semitone, 12), probability: 0, cProbability: 0, direction: "ascending", name: "octave"},
+    {semitones: 12, ratio: Math.pow(semitone, 12), probability: 0, cProbability: 1, direction: "ascending", name: "octave"},
 ]
 
 function cumulativeThreshold() {
@@ -43,6 +43,9 @@ function cumulativeThreshold() {
 }
 
 export function setProbability(probArray){
+    for(let i of intervals){
+        i.probability = 0
+    }
     for(let p of probArray){
         intervals.find(i => i.semitones === p.semitones).probability = p.probability
     }
@@ -54,15 +57,38 @@ export function blankDistribution(){
     return intervals.map(i => {return {interval: `${i.direction} ${i.name}`, semitones: i.semitones, probability: -1}})
 }
 
+export function createProbabilityArr(direction, numberOfIntervals, intervalDissonanceArr){
+    let probabilities = []
+    if(direction === 'both'){
+        probabilities = Array(numberOfIntervals * 2).fill(0).map((o, i) => {
+            if(i % 2 == 0){
+                return {semitones: intervalDissonanceArr[i/2], probability: 1/(2*numberOfIntervals)}
+            }
+            else {
+                return {semitones: -1 * intervalDissonanceArr[(i-1)/2], probability: 1/(2*numberOfIntervals)}
+            }
+            
+        })
+    }
+    else{
+        probabilities = Array(numberOfIntervals).fill(0).map((o, i) => {
+            return {semitones: (direction == 'down' ? -1 : 1) * intervalDissonanceArr[i], probability: 1/numberOfIntervals}
+        })
+    }
+    return probabilities
+}
+
 export function randomInteger(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 export function randomInterval(){
+    console.log(intervals)
     const r = Math.random()
-    console.log(r)
+    
     for(let i of intervals){
         if(r < i.cProbability){
+            console.log(r, i.semitones)
             return i.semitones
         }
     }

@@ -13,21 +13,14 @@ import Settings from './Settings.jsx'
 class Quiz extends React.Component{
     constructor(props){
         super(props)
-        interval.setProbability([
-            {semitones:2, probability: 1/8 },
-            {semitones:4, probability: 1/8 },
-            {semitones:5, probability: 1/8 },
-            {semitones:7, probability: 1/8 },
-            {semitones:9, probability: 1/8 },
-            {semitones:11, probability: 1/8 },
-            {semitones:12, probability: 1/8 }
-        ])
         this.state = {
             playing: false,
             firstPlay: true,
             numberOfQuestions: 1,
             numberCorrect: 0,
             firstAttempt: true,
+            playable: false,
+            nextable: false,
             currentRoot: interval.randomInteger(150, 500),
             currentInterval: interval.randomInterval(),
             correctnessDistribution: interval.blankDistribution()
@@ -79,7 +72,10 @@ class Quiz extends React.Component{
 
                 <br />
 
-                <Settings updateSettings={() => {}} /> 
+                <Settings updateSettings={(settings) => {
+                    console.log(settings)
+                    interval.setProbability(settings.intervals)
+                }} /> 
 
                 <span>
                     <Button shape="round" icon={this.state.firstPlay ? "play-circle" : "redo"} onClick={this.playInterval} />
@@ -90,10 +86,10 @@ class Quiz extends React.Component{
 
                 <div>
                     <Button shape="round" icon="up" onClick={() => {this.sendAnswer(12)}}>Octave</Button>
-                    <Button shape="round" icon="up" onClick={() => {this.sendAnswer(11)}}>Major 7th</Button>
-                    <Button shape="round" icon="up" onClick={() => {this.sendAnswer(10)}}>Minor 7th</Button>
-                    <Button shape="round" icon="up" onClick={() => {this.sendAnswer(9)}}>Major 6th</Button>
-                    <Button shape="round" icon="up" onClick={() => {this.sendAnswer(8)}}>Minor 6th</Button>
+                    <Button shape="round" icon="up" onClick={() => {this.sendAnswer(11)}}>Major Seventh</Button>
+                    <Button shape="round" icon="up" onClick={() => {this.sendAnswer(10)}}>Minor Seventh</Button>
+                    <Button shape="round" icon="up" onClick={() => {this.sendAnswer(9)}}>Major Sixth</Button>
+                    <Button shape="round" icon="up" onClick={() => {this.sendAnswer(8)}}>Minor Sixth</Button>
                     <Button shape="round" icon="up" onClick={() => {this.sendAnswer(7)}}>Perfect Fifth</Button>
                     <Button shape="round" icon="up" onClick={() => {this.sendAnswer(6)}}>Tritone</Button>
                     <Button shape="round" icon="up" onClick={() => {this.sendAnswer(5)}}>Perfect Fourth</Button>
@@ -111,10 +107,10 @@ class Quiz extends React.Component{
                     <Button shape="round" icon="down" onClick={() => {this.sendAnswer(-5)}}>Perfect Fourth</Button>
                     <Button shape="round" icon="down" onClick={() => {this.sendAnswer(-6)}}>Tritone</Button>
                     <Button shape="round" icon="down" onClick={() => {this.sendAnswer(-7)}}>Perfect Fifth</Button>
-                    <Button shape="round" icon="down" onClick={() => {this.sendAnswer(-8)}}>Minor 6th</Button>
-                    <Button shape="round" icon="down" onClick={() => {this.sendAnswer(-9)}}>Major 6th</Button>
-                    <Button shape="round" icon="down" onClick={() => {this.sendAnswer(-10)}}>Minor 7th</Button>
-                    <Button shape="round" icon="down" onClick={() => {this.sendAnswer(-11)}}>Major 7th</Button>
+                    <Button shape="round" icon="down" onClick={() => {this.sendAnswer(-8)}}>Minor Sixth</Button>
+                    <Button shape="round" icon="down" onClick={() => {this.sendAnswer(-9)}}>Major Sixth</Button>
+                    <Button shape="round" icon="down" onClick={() => {this.sendAnswer(-10)}}>Minor Seventh</Button>
+                    <Button shape="round" icon="down" onClick={() => {this.sendAnswer(-11)}}>Major Seventh</Button>
                     <Button shape="round" icon="down" onClick={() => {this.sendAnswer(-12)}}>Octave</Button>
                 </div>
 

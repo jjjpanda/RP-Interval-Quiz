@@ -3,8 +3,11 @@ import {
     Button,
     Modal, 
     Radio,
-    Slider 
+    Slider,
+    Checkbox
 } from 'antd'
+
+import * as interval from '../lib/interval.js'
 
 class Settings extends React.Component{
     constructor(props){
@@ -13,8 +16,9 @@ class Settings extends React.Component{
             direction: 'up',
             visible: false,
             difficulty: 6,
-            intervals: []
+            intervals: interval.createProbabilityArr('up', 6, this.intervalDissonanceArr)
         };
+        this.props.updateSettings(this.state)
     }
 
     intervalDissonanceArr = [
@@ -35,31 +39,18 @@ class Settings extends React.Component{
     onDirectionChange = e => {
         this.setState({
             direction: e.target.value,
+            intervals: interval.createProbabilityArr(e.target.value, this.state.difficulty, this.intervalDissonanceArr)
+        }, () => {
+            this.props.updateSettings(this.state)
         });
     };
 
     onDifficultyChange = value => {
-        let probabilities = []
-        if(this.state.direction === 'both'){
-            probabilities = Array(value * 2).map((o, i) => {
-                if(i % 2 == 0){
-                    return {semitones: this.intervalDissonanceArr[i], probability: 1/(2*value)}
-                }
-                else {
-                    return {semitones: -1 * this.intervalDissonanceArr[i-1], probability: 1/(2*value)}
-                }
-                
-            })
-        }
-        else{
-            probabilities = Array(value).map((o, i) => {
-                return {semitones: (this.state.direction == 'down' ? -1 : 1) * this.intervalDissonanceArr[i], probability: 1/value}
-            })
-        }
-
         this.setState({
             difficulty: value,
-            intervals: probabilities
+            intervals: interval.createProbabilityArr(this.state.direction, value, this.intervalDissonanceArr)
+        }, () => {
+            this.props.updateSettings(this.state)
         });
     };
 
@@ -68,9 +59,7 @@ class Settings extends React.Component{
     }
 
     closeModal = () => {
-        this.setState(() => ({visible: false}), () => {
-            this.props.updateSettings(this.state)
-        })
+        this.setState(() => ({visible: false}))
     }
     
     render() {
@@ -88,6 +77,32 @@ class Settings extends React.Component{
                     </Radio.Group>
 
                     <Slider min={3} max={12} onChange={this.onDifficultyChange} value={this.state.difficulty} />
+                    
+                    {/* <Checkbox onChange={onChange} >Octave</Checkbox>
+                    <Checkbox onChange={onChange} >Major Seventh</Checkbox>
+                    <Checkbox onChange={onChange} >Minor Seventh</Checkbox>
+                    <Checkbox onChange={onChange} >Major Sixth</Checkbox>
+                    <Checkbox onChange={onChange} >Minor Sixth</Checkbox>
+                    <Checkbox onChange={onChange} >Perfect Fifth</Checkbox>
+                    <Checkbox onChange={onChange} >Tritone</Checkbox>
+                    <Checkbox onChange={onChange} >Perfect Fourth</Checkbox>
+                    <Checkbox onChange={onChange} >Major Third</Checkbox>
+                    <Checkbox onChange={onChange} >Minor Third</Checkbox>
+                    <Checkbox onChange={onChange} >Major Second</Checkbox>
+                    <Checkbox onChange={onChange} >Minor Second</Checkbox>
+
+                    <Checkbox onChange={onChange} >Octave</Checkbox>
+                    <Checkbox onChange={onChange} >Major Seventh</Checkbox>
+                    <Checkbox onChange={onChange} >Minor Seventh</Checkbox>
+                    <Checkbox onChange={onChange} >Major Sixth</Checkbox>
+                    <Checkbox onChange={onChange} >Minor Sixth</Checkbox>
+                    <Checkbox onChange={onChange} >Perfect Fifth</Checkbox>
+                    <Checkbox onChange={onChange} >Tritone</Checkbox>
+                    <Checkbox onChange={onChange} >Perfect Fourth</Checkbox>
+                    <Checkbox onChange={onChange} >Major Third</Checkbox>
+                    <Checkbox onChange={onChange} >Minor Third</Checkbox>
+                    <Checkbox onChange={onChange} >Major Second</Checkbox>
+                    <Checkbox onChange={onChange} >Minor Second</Checkbox> */}
 
                 </Modal>
             </div>
