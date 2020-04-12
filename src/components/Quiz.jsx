@@ -14,28 +14,11 @@ class Quiz extends React.Component{
     constructor(props){
         super(props)
         interval.setProbability([
-            {semitones:-12, probability: 0 },
-            {semitones:-11, probability: 0 },
-            {semitones:-10, probability: 0 },
-            {semitones:-9, probability: 0 },
-            {semitones:-8, probability: 0 },
-            {semitones:-7, probability: 0 },
-            {semitones:-6, probability: 0 },
-            {semitones:-5, probability: 0 },
-            {semitones:-4, probability: 0 },
-            {semitones:-3, probability: 0 },
-            {semitones:-2, probability: 0 },
-            {semitones:-1, probability: 0 },
-            {semitones:1, probability: 0 },
             {semitones:2, probability: 1/8 },
-            {semitones:3, probability: 0 },
             {semitones:4, probability: 1/8 },
             {semitones:5, probability: 1/8 },
-            {semitones:6, probability: 0 },
             {semitones:7, probability: 1/8 },
-            {semitones:8, probability: 0 },
             {semitones:9, probability: 1/8 },
-            {semitones:10, probability: 0 },
             {semitones:11, probability: 1/8 },
             {semitones:12, probability: 1/8 }
         ])

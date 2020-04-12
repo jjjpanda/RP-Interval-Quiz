@@ -10,15 +10,56 @@ class Settings extends React.Component{
     constructor(props){
         super(props)
         this.state = {
-            value: 1,
+            direction: 'up',
             visible: false,
+            difficulty: 6,
+            intervals: []
         };
     }
 
-    onChange = e => {
-        console.log('radio checked', e.target.value);
+    intervalDissonanceArr = [
+        7, //Fifth
+        12,//Octave 
+        5, //Fourth
+        4, //Major Third
+        9, //Major Sixth
+        2, //Major Second
+        11,//Major Seventh
+        3, //Minor Third
+        8, //Minor Sixth
+        1, //Minor Second
+        10,//Minor Seventh
+        6  //Tritone
+    ]
+
+    onDirectionChange = e => {
         this.setState({
-            value: e.target.value,
+            direction: e.target.value,
+        });
+    };
+
+    onDifficultyChange = value => {
+        let probabilities = []
+        if(this.state.direction === 'both'){
+            probabilities = Array(value * 2).map((o, i) => {
+                if(i % 2 == 0){
+                    return {semitones: this.intervalDissonanceArr[i], probability: 1/(2*value)}
+                }
+                else {
+                    return {semitones: -1 * this.intervalDissonanceArr[i-1], probability: 1/(2*value)}
+                }
+                
+            })
+        }
+        else{
+            probabilities = Array(value).map((o, i) => {
+                return {semitones: (this.state.direction == 'down' ? -1 : 1) * this.intervalDissonanceArr[i], probability: 1/value}
+            })
+        }
+
+        this.setState({
+            difficulty: value,
+            intervals: probabilities
         });
     };
 
@@ -40,13 +81,13 @@ class Settings extends React.Component{
                     visible={this.state.visible}
                     footer={<Button onClick={this.closeModal} >Ok</Button>}
                 >
-                    <Radio.Group onChange={this.onChange} value={this.state.value}>
-                        <Radio value={1}>A</Radio>
-                        <Radio value={2}>B</Radio>
-                        <Radio value={3}>C</Radio>
+                    <Radio.Group onChange={this.onDirectionChange} value={this.state.direction}>
+                        <Radio value={'up'}>Ascending</Radio>
+                        <Radio value={'down'}>Descending</Radio>
+                        <Radio value={'both'}>Both</Radio>
                     </Radio.Group>
 
-
+                    <Slider min={3} max={12} onChange={this.onDifficultyChange} value={this.state.difficulty} />
 
                 </Modal>
             </div>
