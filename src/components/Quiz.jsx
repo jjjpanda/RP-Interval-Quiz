@@ -74,7 +74,7 @@ class Quiz extends React.Component{
 
                 <Settings updateSettings={(settings) => {
                     console.log(settings)
-                    interval.setProbability(settings.intervals)
+                    interval.setProbability(interval.createProbabilityArr(settings.intervals))
                 }} /> 
 
                 <span>
