@@ -57,25 +57,13 @@ export function blankDistribution(){
     return intervals.map(i => {return {interval: `${i.direction} ${i.name}`, semitones: i.semitones, probability: -1}})
 }
 
-export function createProbabilityArr(direction, numberOfIntervals, intervalDissonanceArr){
-    let probabilities = []
-    if(direction === 'both'){
-        probabilities = Array(numberOfIntervals * 2).fill(0).map((o, i) => {
-            if(i % 2 == 0){
-                return {semitones: intervalDissonanceArr[i/2], probability: 1/(2*numberOfIntervals)}
-            }
-            else {
-                return {semitones: -1 * intervalDissonanceArr[(i-1)/2], probability: 1/(2*numberOfIntervals)}
-            }
-            
-        })
-    }
-    else{
-        probabilities = Array(numberOfIntervals).fill(0).map((o, i) => {
-            return {semitones: (direction == 'down' ? -1 : 1) * intervalDissonanceArr[i], probability: 1/numberOfIntervals}
-        })
-    }
-    return probabilities
+export function createProbabilityArr(intervalArr){
+    return intervalArr.map(i => {
+        return {
+            semitones: i,
+            probability: 1/ intervalArr.length
+        }
+    })
 }
 
 export function randomInteger(min, max) {
