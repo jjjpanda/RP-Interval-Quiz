@@ -8,22 +8,38 @@ import {
     Progress
 } from 'antd'
 
+import {
+    ArrowRightOutlined,
+    PlayCircleOutlined,
+    CaretUpOutlined,
+    CaretDownOutlined,
+    RedoOutlined,
+    CloseOutlined,
+    CheckOutlined
+} from '@ant-design/icons'
+
 import Settings from './Settings.jsx'
+import Cookies from 'js-cookie'
 
 class Quiz extends React.Component{
     constructor(props){
         super(props)
+
+        interval.setProbability(interval.createProbabilityArr(JSON.parse(Cookies.get('intervals')) || Settings.intervalArr('up', 6)))
+        
         this.state = {
             playing: false,
             firstPlay: true,
             numberOfQuestions: 1,
             numberCorrect: 0,
             firstAttempt: true,
-            playable: false,
+            playable: true,
             nextable: false,
             currentRoot: interval.randomInteger(150, 500),
             currentInterval: interval.randomInterval(),
-            correctnessDistribution: interval.blankDistribution()
+            correctnessDistribution: interval.blankDistribution(),
+            incorrectGuesses: [],
+            correct: false,
         }
         console.log(this.state.correctnessDistribution)
     }
@@ -36,6 +52,21 @@ class Quiz extends React.Component{
         })
     }
 
+    nextInterval = () => {
+        this.setState(() => ({
+            firstPlay: true,
+            firstAttempt: true,
+            nextable: false,
+            playable: true,
+            currentInterval: interval.randomInterval(),
+            currentRoot: interval.randomInteger(150, 500),
+            incorrectGuesses: [],
+            correct: false
+        }), () =>{
+            
+        })
+    }
+
     sendAnswer = (semitones) => {
         console.log(semitones)
         if(semitones === this.state.currentInterval){
@@ -43,26 +74,53 @@ class Quiz extends React.Component{
                 this.setState((state) => ({
                     numberCorrect: state.numberCorrect+1, 
                     numberOfQuestions: state.numberOfQuestions+1, 
-                    firstPlay: true,
-                    currentInterval: interval.randomInterval(),
-                    currentRoot: interval.randomInteger(150, 500)
+                    nextable: true,
+                    firstAttempt: false,
+                    correct: true,
                 }))
             }
             else{
-                this.setState((state) => ({ 
-                    numberOfQuestions: state.numberOfQuestions+1, 
-                    firstPlay: true,
-                    currentInterval: interval.randomInterval(),
-                    firstAttempt: true,
-                    currentRoot: interval.randomInteger(150, 500),
+                this.setState((state) => ({
+                    nextable: true,
+                    correct: true,
                 }))
             }
         }
         else{
-            this.setState(() => ({ 
-                firstAttempt: false
-            }))
+            if(this.state.firstAttempt){
+                this.setState((state) => { 
+                    state.incorrectGuesses.push(semitones)
+                    return {
+                        numberOfQuestions: state.numberOfQuestions+1, 
+                        firstAttempt: false,
+                        incorrectGuesses: state.incorrectGuesses 
+                    }    
+                })
+            }
+            else{
+                this.setState((state) => { 
+                    state.incorrectGuesses.push(semitones)
+                    return {
+                        incorrectGuesses: state.incorrectGuesses 
+                    }    
+                })
+            }
         }
+    }
+
+    renderButtons(){
+        return [...interval.intervals].reverse().map(i => {
+            return (
+                <Button 
+                    danger={this.state.incorrectGuesses.includes(i.semitones)} 
+                    shape="round" 
+                    icon={this.state.incorrectGuesses.includes(i.semitones) ? <CloseOutlined /> : (this.state.correct && i.semitones === this.state.currentInterval ? <CheckOutlined /> : (i.direction === 'ascending' ? <CaretUpOutlined /> : <CaretDownOutlined /> ))} 
+                    onClick={() => {this.sendAnswer(i.semitones)}}
+                >
+                    {i.name}
+                </Button>
+            )
+        })
     }
         
     render() {
@@ -78,43 +136,26 @@ class Quiz extends React.Component{
                 }} /> 
 
                 <span>
-                    <Button shape="round" icon={this.state.firstPlay ? "play-circle" : "redo"} onClick={this.playInterval} />
-                    <Button shape="round" icon="arrow-right" onClick={() => {}} />
+                    <Button shape="round" disabled={!this.state.playable} icon={this.state.firstPlay ? <PlayCircleOutlined /> : <RedoOutlined />} onClick={this.playInterval} />
+                    <Button shape="round" disabled={!this.state.nextable} icon={<ArrowRightOutlined />} onClick={this.nextInterval} />
                 </span>
 
                 <br />
 
                 <div>
-                    <Button shape="round" icon="up" onClick={() => {this.sendAnswer(12)}}>Octave</Button>
-                    <Button shape="round" icon="up" onClick={() => {this.sendAnswer(11)}}>Major Seventh</Button>
-                    <Button shape="round" icon="up" onClick={() => {this.sendAnswer(10)}}>Minor Seventh</Button>
-                    <Button shape="round" icon="up" onClick={() => {this.sendAnswer(9)}}>Major Sixth</Button>
-                    <Button shape="round" icon="up" onClick={() => {this.sendAnswer(8)}}>Minor Sixth</Button>
-                    <Button shape="round" icon="up" onClick={() => {this.sendAnswer(7)}}>Perfect Fifth</Button>
-                    <Button shape="round" icon="up" onClick={() => {this.sendAnswer(6)}}>Tritone</Button>
-                    <Button shape="round" icon="up" onClick={() => {this.sendAnswer(5)}}>Perfect Fourth</Button>
-                    <Button shape="round" icon="up" onClick={() => {this.sendAnswer(4)}}>Major Third</Button>
-                    <Button shape="round" icon="up" onClick={() => {this.sendAnswer(3)}}>Minor Third</Button>
-                    <Button shape="round" icon="up" onClick={() => {this.sendAnswer(2)}}>Major Second</Button>
-                    <Button shape="round" icon="up" onClick={() => {this.sendAnswer(1)}}>Minor Second</Button>
-                    
-                    <br />
-
-                    <Button shape="round" icon="down" onClick={() => {this.sendAnswer(-1)}}>Minor Second</Button>
-                    <Button shape="round" icon="down" onClick={() => {this.sendAnswer(-2)}}>Major Second</Button>
-                    <Button shape="round" icon="down" onClick={() => {this.sendAnswer(-3)}}>Minor Third</Button>
-                    <Button shape="round" icon="down" onClick={() => {this.sendAnswer(-4)}}>Major Third</Button>
-                    <Button shape="round" icon="down" onClick={() => {this.sendAnswer(-5)}}>Perfect Fourth</Button>
-                    <Button shape="round" icon="down" onClick={() => {this.sendAnswer(-6)}}>Tritone</Button>
-                    <Button shape="round" icon="down" onClick={() => {this.sendAnswer(-7)}}>Perfect Fifth</Button>
-                    <Button shape="round" icon="down" onClick={() => {this.sendAnswer(-8)}}>Minor Sixth</Button>
-                    <Button shape="round" icon="down" onClick={() => {this.sendAnswer(-9)}}>Major Sixth</Button>
-                    <Button shape="round" icon="down" onClick={() => {this.sendAnswer(-10)}}>Minor Seventh</Button>
-                    <Button shape="round" icon="down" onClick={() => {this.sendAnswer(-11)}}>Major Seventh</Button>
-                    <Button shape="round" icon="down" onClick={() => {this.sendAnswer(-12)}}>Octave</Button>
+                    {this.renderButtons()}
                 </div>
 
-                <Progress percent={this.state.numberCorrect/this.state.numberOfQuestions*100} showInfo={true} type="circle" format={p => `${Math.round(p*100)/100}% Correct`} />
+                <Progress 
+                    percent={this.state.numberCorrect/this.state.numberOfQuestions*100} 
+                    showInfo={true} 
+                    type="circle" 
+                    format={p => `${Math.round(p*100)/100}% Correct`} 
+                    strokeColor={{
+                        '0%': '#108ee9',
+                        '100%': '#87d068',
+                    }}
+                />
             </div>
         )
     }

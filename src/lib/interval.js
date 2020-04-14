@@ -4,7 +4,7 @@ import * as Tone from "tone";
 const synth = new Tone.Synth().toMaster();
 const semitone = Math.pow(2, 1/12)
 
-let intervals = [
+export let intervals = [
     {semitones: -12, ratio: Math.pow(semitone, -12), probability: 0, cProbability: 0, direction: "descending", name: "octave"},
     {semitones: -11, ratio: Math.pow(semitone, -11), probability: 0, cProbability: 0, direction: "descending", name: "major seventh"},
     {semitones: -10, ratio: Math.pow(semitone, -10), probability: 0, cProbability: 0, direction: "descending", name: "minor seventh"},

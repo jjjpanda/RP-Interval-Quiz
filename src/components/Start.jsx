@@ -9,14 +9,24 @@ import {
     Button
 } from 'antd'
 
+import * as interval from '../lib/interval.js'
+import Settings from './Settings.jsx'
+
 class Start extends React.Component{
     render() {
         return (
-            <Button>
-                <Link to="/quiz">
-                    Start
-                </Link>
-            </Button>
+            <div>
+                <Settings updateSettings={(settings) => {
+                    console.log(settings)
+                    interval.setProbability(interval.createProbabilityArr(settings.intervals))
+                }} />  
+                <Button>
+                    <Link to="/quiz">
+                        Start
+                    </Link>
+                </Button>
+            </div>
+           
         )
     }
 }

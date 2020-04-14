@@ -4,71 +4,90 @@ import {
     Modal, 
     Radio,
     Slider,
-    Checkbox
+    Checkbox,
+    Switch
 } from 'antd'
 
-const intervalDissonanceArr = [
-    7, //Fifth
-    12,//Octave 
-    5, //Fourth
-    4, //Major Third
-    9, //Major Sixth
-    2, //Major Second
-    11,//Major Seventh
-    3, //Minor Third
-    8, //Minor Sixth
-    1, //Minor Second
-    10,//Minor Seventh
-    6  //Tritone
-]
+import {
+    SettingOutlined
+} from '@ant-design/icons'
 
-const intervalArr = (direction, numberOfIntervals) => {
-    let probabilities = []
-    if(direction === 'both'){
-        probabilities = Array(numberOfIntervals * 2).fill(0).map((o, i) => {
-            if(i % 2 == 0){
-                return intervalDissonanceArr[i/2]
-            }
-            else {
-                return -1 * intervalDissonanceArr[(i-1)/2]
-            }
-            
-        })
-    }
-    else{
-        probabilities = Array(numberOfIntervals).fill(0).map((o, i) => {
-            return (direction == 'down' ? -1 : 1) * intervalDissonanceArr[i]
-        })
-    }
-    return probabilities
-}
+import Cookies from 'js-cookie'
+
+import * as interval from '../lib/interval.js'
 
 class Settings extends React.Component{
     constructor(props){
         super(props)
         this.state = {
-            direction: 'up',
             visible: false,
-            difficulty: 6,
-            intervals: intervalArr('up', 6)
+            direction: Cookies.get('direction') || 'up',
+            difficulty: Cookies.get('difficulty') || 6,
+            intervals: JSON.parse(Cookies.get('intervals')) || Settings.intervalArr('up', 6),
+            speed: Cookies.get('speed') || "off"
         };
+        console.log(this.state)
+        Cookies.set('direction', this.state.direction, { expires: 21 })
+        Cookies.set('difficulty', this.state.difficulty, { expires: 21 })
+        Cookies.set('intervals', this.state.intervals, { expires: 21 })
+        Cookies.set('speed', this.state.speed, { expires: 21 }) 
         this.props.updateSettings(this.state)
     }
 
+    static intervalDissonanceArr = [
+        7, //Fifth
+        12,//Octave 
+        5, //Fourth
+        4, //Major Third
+        9, //Major Sixth
+        2, //Major Second
+        11,//Major Seventh
+        3, //Minor Third
+        8, //Minor Sixth
+        1, //Minor Second
+        10,//Minor Seventh
+        6  //Tritone
+    ]
+
+    static intervalArr = (direction, numberOfIntervals) => {
+        let probabilities = []
+        if(direction === 'both'){
+            probabilities = Array(numberOfIntervals * 2).fill(0).map((o, i) => {
+                if(i % 2 == 0){
+                    return Settings.intervalDissonanceArr[i/2]
+                }
+                else {
+                    return -1 * Settings.intervalDissonanceArr[(i-1)/2]
+                }
+                
+            })
+        }
+        else{
+            probabilities = Array(numberOfIntervals).fill(0).map((o, i) => {
+                return (direction == 'down' ? -1 : 1) * Settings.intervalDissonanceArr[i]
+            })
+        }
+        return probabilities
+    }
+
     onDirectionChange = e => {
-        this.setState({
+        this.setState((state) => ({
             direction: e.target.value,
-            intervals: intervalArr(e.target.value, this.state.difficulty)
-        }, () => {
+            intervals: Settings.intervalArr(e.target.value, state.difficulty)
+        }), () => {
+            Cookies.set('direction', this.state.direction, { expires: 21 })
+            Cookies.set('intervals', this.state.intervals, { expires: 21 }) 
             this.props.updateSettings(this.state)
         });
     };
 
     onDifficultyChange = value => {
-        this.setState({
+        this.setState((state) => ({
             difficulty: value,
-            intervals: intervalArr(this.state.direction, value)
-        }, () => {
+            intervals: Settings.intervalArr(state.direction, value)
+        }), () => {
+            Cookies.set('difficulty', this.state.difficulty, { expires: 21 })
+            Cookies.set('intervals', this.state.intervals, { expires: 21 }) 
             this.props.updateSettings(this.state)
         });
     };
@@ -84,6 +103,17 @@ class Settings extends React.Component{
             }
             return { intervals: state.intervals }
         }, () => {
+            Cookies.set('intervals', this.state.intervals, { expires: 21 })
+            this.props.updateSettings(this.state)
+        })
+    }
+
+    onSwitchChange = (checked) => {
+        console.log(checked)
+        this.setState(() => ({ 
+            speed: (checked ? "on" : "off") 
+        }), () => {
+            Cookies.set('speed', this.state.speed, { expires: 21 })
             this.props.updateSettings(this.state)
         })
     }
@@ -95,15 +125,30 @@ class Settings extends React.Component{
     closeModal = () => {
         this.setState(() => ({visible: false}))
     }
+
+    renderCheckbox() {
+        return [...interval.intervals].reverse().map(i => {
+            return (
+                <Checkbox onChange= {(e) => {this.onCheckChange(e,i.semitones)}} checked={this.state.intervals.includes(i.semitones)} >{`${i.direction} ${i.name}`}</Checkbox>
+            )
+        })
+    }
     
     render() {
         return (
             <div>
-                <Button shape="round" icon="setting" onClick={this.openModal} />
+                <Button shape="round" icon={<SettingOutlined />} onClick={this.openModal} />
                 <Modal
                     visible={this.state.visible}
                     footer={<Button onClick={this.closeModal} >Ok</Button>}
                 >
+                    <span>
+                        <Switch checkedChildren="On" unCheckedChildren="Off" onChange={this.onSwitchChange} checked = {this.state.speed === 'on'} />
+                        Speed Mode
+                    </span>
+
+                    <br />
+
                     <Radio.Group onChange={this.onDirectionChange} value={this.state.direction}>
                         <Radio value={'up'}>Ascending</Radio>
                         <Radio value={'down'}>Descending</Radio>
@@ -116,30 +161,7 @@ class Settings extends React.Component{
                     <hr />
                     <br /> 
                     
-                    <Checkbox onChange= {(e) => {this.onCheckChange(e,12)}} checked={this.state.intervals.includes(12)} >Octave</Checkbox>
-                    <Checkbox onChange= {(e) => {this.onCheckChange(e,11)}} checked={this.state.intervals.includes(11)} >Major Seventh</Checkbox>
-                    <Checkbox onChange= {(e) => {this.onCheckChange(e,10)}} checked={this.state.intervals.includes(10)} >Minor Seventh</Checkbox>
-                    <Checkbox onChange= {(e) => {this.onCheckChange(e,9)}} checked={this.state.intervals.includes(9)} >Major Sixth</Checkbox>
-                    <Checkbox onChange= {(e) => {this.onCheckChange(e,8)}} checked={this.state.intervals.includes(8)} >Minor Sixth</Checkbox>
-                    <Checkbox onChange= {(e) => {this.onCheckChange(e,7)}} checked={this.state.intervals.includes(7)} >Perfect Fifth</Checkbox>
-                    <Checkbox onChange= {(e) => {this.onCheckChange(e,6)}} checked={this.state.intervals.includes(6)} >Tritone</Checkbox>
-                    <Checkbox onChange= {(e) => {this.onCheckChange(e,5)}} checked={this.state.intervals.includes(5)} >Perfect Fourth</Checkbox>
-                    <Checkbox onChange= {(e) => {this.onCheckChange(e,4)}} checked={this.state.intervals.includes(4)} >Major Third</Checkbox>
-                    <Checkbox onChange= {(e) => {this.onCheckChange(e,3)}} checked={this.state.intervals.includes(3)} >Minor Third</Checkbox>
-                    <Checkbox onChange= {(e) => {this.onCheckChange(e,2)}} checked={this.state.intervals.includes(2)} >Major Second</Checkbox>
-                    <Checkbox onChange= {(e) => {this.onCheckChange(e,1)}} checked={this.state.intervals.includes(1)} >Minor Second</Checkbox>
-                    <Checkbox onChange= {(e) => {this.onCheckChange(e,-12)}} checked={this.state.intervals.includes(-12)} >Octave</Checkbox>
-                    <Checkbox onChange= {(e) => {this.onCheckChange(e,-11)}} checked={this.state.intervals.includes(-11)} >Major Seventh</Checkbox>
-                    <Checkbox onChange= {(e) => {this.onCheckChange(e,-10)}} checked={this.state.intervals.includes(-10)} >Minor Seventh</Checkbox>
-                    <Checkbox onChange= {(e) => {this.onCheckChange(e,-9)}} checked={this.state.intervals.includes(-9)} >Major Sixth</Checkbox>
-                    <Checkbox onChange= {(e) => {this.onCheckChange(e,-8)}} checked={this.state.intervals.includes(-8)} >Minor Sixth</Checkbox>
-                    <Checkbox onChange= {(e) => {this.onCheckChange(e,-7)}} checked={this.state.intervals.includes(-7)} >Perfect Fifth</Checkbox>
-                    <Checkbox onChange= {(e) => {this.onCheckChange(e,-6)}} checked={this.state.intervals.includes(-6)} >Tritone</Checkbox>
-                    <Checkbox onChange= {(e) => {this.onCheckChange(e,-5)}} checked={this.state.intervals.includes(-5)} >Perfect Fourth</Checkbox>
-                    <Checkbox onChange= {(e) => {this.onCheckChange(e,-4)}} checked={this.state.intervals.includes(-4)} >Major Third</Checkbox>
-                    <Checkbox onChange= {(e) => {this.onCheckChange(e,-3)}} checked={this.state.intervals.includes(-3)} >Minor Third</Checkbox>
-                    <Checkbox onChange= {(e) => {this.onCheckChange(e,-2)}} checked={this.state.intervals.includes(-2)} >Major Second</Checkbox>
-                    <Checkbox onChange= {(e) => {this.onCheckChange(e,-1)}} checked={this.state.intervals.includes(-1)} >Minor Second</Checkbox>
+                    {this.renderCheckbox()}
 
                 </Modal>
             </div>
