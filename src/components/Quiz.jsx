@@ -4,8 +4,10 @@ import * as interval from '../lib/interval.js'
 
 import {
     Button,
-    Spin,
-    Progress
+    Progress,
+    Layout,
+    Space,
+    Result
 } from 'antd'
 
 import {
@@ -15,10 +17,13 @@ import {
     CaretDownOutlined,
     RedoOutlined,
     CloseOutlined,
-    CheckOutlined
+    CheckOutlined,
+    SoundOutlined,
+    NotificationOutlined,
 } from '@ant-design/icons'
 
 import Settings from './Settings.jsx'
+import Results from './Results.jsx'
 import Cookies from 'js-cookie'
 
 class Quiz extends React.Component{
@@ -37,7 +42,7 @@ class Quiz extends React.Component{
             nextable: false,
             currentRoot: interval.randomInteger(150, 500),
             currentInterval: interval.randomInterval(),
-            correctnessDistribution: interval.blankDistribution(),
+            correctnessDistribution: interval.currentDistribution(),
             incorrectGuesses: [],
             correct: false,
         }
@@ -71,13 +76,17 @@ class Quiz extends React.Component{
         console.log(semitones)
         if(semitones === this.state.currentInterval){
             if(this.state.firstAttempt){
-                this.setState((state) => ({
-                    numberCorrect: state.numberCorrect+1, 
-                    numberOfQuestions: state.numberOfQuestions+1, 
-                    nextable: true,
-                    firstAttempt: false,
-                    correct: true,
-                }))
+                this.setState((state) => {
+                    state.correctnessDistribution.find(i => semitones === i.semitones).correct++
+                    return {
+                        numberCorrect: state.numberCorrect+1,
+                        correctnessDistribution: state.correctnessDistribution,
+                        numberOfQuestions: state.numberOfQuestions+1, 
+                        nextable: true,
+                        firstAttempt: false,
+                        correct: true,
+                    }
+                })
             }
             else{
                 this.setState((state) => ({
@@ -90,6 +99,7 @@ class Quiz extends React.Component{
             if(this.state.firstAttempt){
                 this.setState((state) => { 
                     state.incorrectGuesses.push(semitones)
+                    state.correctnessDistribution.find(i => this.state.currentInterval === i.semitones).incorrect++
                     return {
                         numberOfQuestions: state.numberOfQuestions+1, 
                         firstAttempt: false,
@@ -108,8 +118,23 @@ class Quiz extends React.Component{
         }
     }
 
-    renderButtons(){
-        return [...interval.intervals].reverse().map(i => {
+    renderAscendingButtons(){
+        return [...interval.intervals].slice(12,24).map(i => {
+            return (
+                <Button 
+                    danger={this.state.incorrectGuesses.includes(i.semitones)} 
+                    shape="round" 
+                    icon={this.state.incorrectGuesses.includes(i.semitones) ? <CloseOutlined /> : (this.state.correct && i.semitones === this.state.currentInterval ? <CheckOutlined /> : (i.direction === 'ascending' ? <CaretUpOutlined /> : <CaretDownOutlined /> ))} 
+                    onClick={() => {this.sendAnswer(i.semitones)}}
+                >
+                    {i.name}
+                </Button>
+            )
+        })
+    }
+
+    renderDescendingButtons(){
+        return [...interval.intervals].slice(0,12).reverse().map(i => {
             return (
                 <Button 
                     danger={this.state.incorrectGuesses.includes(i.semitones)} 
@@ -125,38 +150,58 @@ class Quiz extends React.Component{
         
     render() {
         return (
-            <div>
-                {this.state.playing ? <Spin /> : null}
+            <Layout>
+                <Layout.Header style={{textAlign: 'right'}}>
+                    <Space>
+                        <Settings updateSettings={(settings) => {
+                            console.log(settings)
+                            interval.setProbability(interval.createProbabilityArr(settings.intervals))
+                        }} /> 
+                        <Results 
+                            results = {this.state.correctnessDistribution}
+                        />
+                    </Space>
+                </Layout.Header>
+                
+                <Layout.Content style={{textAlign: 'center'}}>
 
-                <br />
+                    <Space >
+                        {this.state.playing ? <SoundOutlined /> : <NotificationOutlined />}
+                    </Space>
 
-                <Settings updateSettings={(settings) => {
-                    console.log(settings)
-                    interval.setProbability(interval.createProbabilityArr(settings.intervals))
-                }} /> 
+                    <br />
 
-                <span>
-                    <Button shape="round" disabled={!this.state.playable} icon={this.state.firstPlay ? <PlayCircleOutlined /> : <RedoOutlined />} onClick={this.playInterval} />
-                    <Button shape="round" disabled={!this.state.nextable} icon={<ArrowRightOutlined />} onClick={this.nextInterval} />
-                </span>
+                    <Space direction={'horizontal'}>
+                        <Button shape="round" disabled={!this.state.playable} icon={this.state.firstPlay ? <PlayCircleOutlined /> : <RedoOutlined />} onClick={this.playInterval} />
+                        <Button shape="round" disabled={!this.state.nextable} icon={<ArrowRightOutlined />} onClick={this.nextInterval} />
+                    </Space>
 
-                <br />
+                    <br />
 
-                <div>
-                    {this.renderButtons()}
-                </div>
+                    <Space>
+                        <Space direction={"vertical"}>
+                            {this.renderAscendingButtons()}
+                        </Space>
+                        <Space direction={"vertical"}>
+                            {this.renderDescendingButtons()}
+                        </Space>
+                    </Space>
 
-                <Progress 
-                    percent={this.state.numberCorrect/this.state.numberOfQuestions*100} 
-                    showInfo={true} 
-                    type="circle" 
-                    format={p => `${Math.round(p*100)/100}% Correct`} 
-                    strokeColor={{
-                        '0%': '#108ee9',
-                        '100%': '#87d068',
-                    }}
-                />
-            </div>
+                    <br />
+
+                    <Progress 
+                        percent={this.state.numberCorrect/this.state.numberOfQuestions*100} 
+                        showInfo={true} 
+                        type="circle" 
+                        format={p => `${Math.round(p*100)/100}% Correct`} 
+                        strokeColor={{
+                            '0%': '#108ee9',
+                            '100%': '#87d068',
+                        }}
+                    />
+                </Layout.Content>
+                
+            </Layout>
         )
     }
 }

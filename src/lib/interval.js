@@ -53,8 +53,8 @@ export function setProbability(probArray){
 }
 
 
-export function blankDistribution(){
-    return intervals.map(i => {return {interval: `${i.direction} ${i.name}`, semitones: i.semitones, probability: -1}})
+export function currentDistribution(){
+    return intervals.map(i => {return {interval: `${i.direction} ${i.name}`, semitones: i.semitones, correct: 0, incorrect: 0}})
 }
 
 export function createProbabilityArr(intervalArr){
