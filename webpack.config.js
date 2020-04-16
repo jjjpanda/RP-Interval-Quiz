@@ -2,7 +2,7 @@ const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
-    mode: 'development',
+    mode: 'production',
     entry: {
       app: './src/App.jsx',
     },
@@ -17,7 +17,7 @@ module.exports = {
       rules: [
         {
           test: /\.jsx?$/,
-          exclude: [/node_modules/, /coverage/, /eslint/, /que-series/],
+          exclude: [/node_modules/],
           loader: "babel-loader"
         },
         {
