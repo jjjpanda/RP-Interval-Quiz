@@ -5,13 +5,13 @@ import * as interval from '../lib/interval.js'
 import {
     Button,
     Progress,
-    Layout,
+    Table,
     Space,
     Modal
 } from 'antd'
 
 import {
-    StopOutlined
+    PauseCircleOutlined
 } from '@ant-design/icons'
 
 class Results extends React.Component{
@@ -30,16 +30,49 @@ class Results extends React.Component{
         this.setState(() => ({visible: false}))
     }
 
+    columns = [
+        {
+            title: 'Interval',
+            dataIndex: 'interval',
+            key: 'interval',
+        },
+        {
+            title: 'Semitones',
+            dataIndex: 'semitones',
+            key: 'semitones',
+        },
+        {
+            title: 'Correct',
+            dataIndex: 'correct',
+            key: 'correct',
+        },
+        {
+            title: 'Incorrect',
+            dataIndex: 'incorrect',
+            key: 'incorrect',
+        },
+        {
+            title: 'Percent Correct',
+            dataIndex: 'percent',
+            key: 'percent',
+            render: (text) => {
+                return (
+                    <div>{text.toFixed(2)}%</div>
+                )
+            }
+        },
+    ];
+
     render() {
         return (
             <div>
-                <Button shape="round" icon={<StopOutlined />} onClick={this.openModal} />
+                <Button shape="round" icon={<PauseCircleOutlined />} onClick={this.openModal} />
                 <Modal
                     closable={false}
                     visible={this.state.visible}
                     footer={<Button onClick={this.closeModal} >Ok</Button>}
                 >
-                    {JSON.stringify(this.props.results, null, "\t")}
+                    <Table size={'small'} pagination={false} dataSource={[...this.props.results].reverse().filter(i => i.correct != 0 || i.incorrect != 0)} columns={this.columns} />
                 </Modal>
             </div>
         )

@@ -20,11 +20,17 @@ import * as interval from '../lib/interval.js'
 class Settings extends React.Component{
     constructor(props){
         super(props)
+        let cookieIntervals
+        try {
+            cookieIntervals = JSON.parse(Cookies.get('intervals'))
+        } catch(e) {
+            cookieIntervals = undefined
+        }
         this.state = {
             visible: false,
             direction: Cookies.get('direction') || 'up',
             difficulty: Cookies.get('difficulty') || 6,
-            intervals: JSON.parse(Cookies.get('intervals')) || Settings.intervalArr('up', 6),
+            intervals: cookieIntervals || Settings.intervalArr('up', 6),
             speed: Cookies.get('speed') || "off"
         };
         console.log(this.state)

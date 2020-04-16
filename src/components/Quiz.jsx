@@ -77,7 +77,9 @@ class Quiz extends React.Component{
         if(semitones === this.state.currentInterval){
             if(this.state.firstAttempt){
                 this.setState((state) => {
-                    state.correctnessDistribution.find(i => semitones === i.semitones).correct++
+                    const index = state.correctnessDistribution.findIndex(i => semitones === i.semitones)
+                    state.correctnessDistribution[index].correct++
+                    state.correctnessDistribution[index].percent = 100 * state.correctnessDistribution[index].correct / (state.correctnessDistribution[index].correct + state.correctnessDistribution[index].incorrect)
                     return {
                         numberCorrect: state.numberCorrect+1,
                         correctnessDistribution: state.correctnessDistribution,
@@ -99,7 +101,9 @@ class Quiz extends React.Component{
             if(this.state.firstAttempt){
                 this.setState((state) => { 
                     state.incorrectGuesses.push(semitones)
-                    state.correctnessDistribution.find(i => this.state.currentInterval === i.semitones).incorrect++
+                    const index = state.correctnessDistribution.findIndex(i => this.state.currentInterval === i.semitones)
+                    state.correctnessDistribution[index].incorrect++
+                    state.correctnessDistribution[index].percent = 100 * state.correctnessDistribution[index].correct / (state.correctnessDistribution[index].correct + state.correctnessDistribution[index].incorrect)
                     return {
                         numberOfQuestions: state.numberOfQuestions+1, 
                         firstAttempt: false,
