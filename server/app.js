@@ -16,7 +16,7 @@ app.use('/img', express.static(path.join(__dirname, '../src/img')));
 const knownPaths = ['/', '/quiz'];
 for (const webPath of knownPaths) {
   app.use(webPath, express.static('./docs', {
-    index: 'app.html',
+    index: 'index.html',
   }));
 }
 
