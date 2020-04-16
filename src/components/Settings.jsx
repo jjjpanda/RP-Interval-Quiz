@@ -5,7 +5,8 @@ import {
     Radio,
     Slider,
     Checkbox,
-    Switch
+    Switch,
+    Space
 } from 'antd'
 
 import {
@@ -126,26 +127,36 @@ class Settings extends React.Component{
         this.setState(() => ({visible: false}))
     }
 
-    renderCheckbox() {
-        return [...interval.intervals].reverse().map(i => {
+    renderAscendingCheckbox() {
+        return [...interval.intervals].slice(12,24).map(i => {
             return (
                 <Checkbox onChange= {(e) => {this.onCheckChange(e,i.semitones)}} checked={this.state.intervals.includes(i.semitones)} >{`${i.direction} ${i.name}`}</Checkbox>
             )
         })
     }
+
+    renderDescendingCheckbox() {
+        return [...interval.intervals].slice(0,12).reverse().map(i => {
+            return (
+                <Checkbox onChange= {(e) => {this.onCheckChange(e,i.semitones)}} checked={this.state.intervals.includes(i.semitones)} >{`${i.direction} ${i.name}`}</Checkbox>
+            )
+        })
+    }   
     
     render() {
         return (
             <div>
                 <Button shape="round" icon={<SettingOutlined />} onClick={this.openModal} />
                 <Modal
+                    closable={false}
                     visible={this.state.visible}
                     footer={<Button onClick={this.closeModal} >Ok</Button>}
                 >
-                    <span>
+                    <Space>
+                        Speed Mode:
                         <Switch checkedChildren="On" unCheckedChildren="Off" onChange={this.onSwitchChange} checked = {this.state.speed === 'on'} />
-                        Speed Mode
-                    </span>
+                        
+                    </Space>
 
                     <br />
 
@@ -160,8 +171,13 @@ class Settings extends React.Component{
                     <br />
                     <hr />
                     <br /> 
-                    
-                    {this.renderCheckbox()}
+
+                    <Space direction={"vertical"}>
+                        {this.renderAscendingCheckbox()}
+                    </Space>
+                    <Space direction={"vertical"}>
+                        {this.renderDescendingCheckbox()}
+                    </Space>
 
                 </Modal>
             </div>
