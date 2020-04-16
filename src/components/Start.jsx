@@ -7,7 +7,9 @@ import {
 } from 'react-router-dom';
 import {
     Button,
-    Layout
+    Layout,
+    Space,
+    Typography
 } from 'antd'
 
 import * as interval from '../lib/interval.js'
@@ -24,11 +26,16 @@ class Start extends React.Component{
                     }} />  
                 </Layout.Header>
                 <Layout.Content style={{textAlign: 'center'}}>
-                    <Button>
-                        <Link to="/quiz">
-                            Start
-                        </Link>
-                    </Button>
+                    <Space direction="vertical">
+                        <Typography>RP Interval Quiz</Typography>
+                        <br />
+                        <Button>
+                            <Link to="/quiz">
+                                Start
+                            </Link>
+                        </Button>
+                    </Space>
+                    
                 </Layout.Content>
             </Layout>
         )
