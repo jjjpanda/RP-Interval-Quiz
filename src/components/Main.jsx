@@ -13,8 +13,8 @@ import {
 
 import Start from './Start.jsx'
 import Quiz from './Quiz.jsx'
-import Settings from './Settings.jsx'
-import Results from './Results.jsx'
+
+console.log(window.location)
 
 const Content = Layout.Content
 
@@ -28,7 +28,7 @@ class Main extends React.Component{
 
     render() {
         return (
-            <Router basename={window.location.pathname || ''} >
+            <Router basename={'/RP-Interval-Quiz'} >
                 <Layout style={{ minHeight: '100vh' }}>
                     <Content>
                         <Route exact path="/" render={(props) => (<Start {...props} />)} />
