@@ -13,11 +13,18 @@ app.use(bodyParser.json());
 app.use('/css', express.static(path.join(__dirname, '../src/css')));
 app.use('/img', express.static(path.join(__dirname, '../src/img')));
 
-const knownPaths = ['/', '/quiz'];
+const knownPaths = ['/RP-Interval-Quiz/', '/RP-Interval-Quiz/quiz'];
 for (const webPath of knownPaths) {
   app.use(webPath, express.static('./docs', {
     index: 'index.html',
   }));
+}
+
+const shortPaths = ['/', '/quiz'];
+for (const webPath of shortPaths){
+  app.use(webPath, (req, res) => {
+    res.redirect(`/RP-Interval-Quiz${webPath}`)
+  })
 }
 
 module.exports = app;
