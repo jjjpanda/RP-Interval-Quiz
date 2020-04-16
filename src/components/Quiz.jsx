@@ -1,5 +1,10 @@
 import React from 'react'
-
+import {
+    BrowserRouter as Router,
+    Link,
+    Route,
+    withRouter,
+} from 'react-router-dom';
 import * as interval from '../lib/interval.js'
 
 import {
@@ -7,7 +12,6 @@ import {
     Progress,
     Layout,
     Space,
-    Result
 } from 'antd'
 
 import {
@@ -20,6 +24,7 @@ import {
     CheckOutlined,
     SoundOutlined,
     NotificationOutlined,
+    LeftCircleOutlined
 } from '@ant-design/icons'
 
 import Settings from './Settings.jsx'
@@ -37,6 +42,7 @@ class Quiz extends React.Component{
             firstPlay: true,
             numberOfQuestions: 1,
             numberCorrect: 0,
+            correctInARow: 0,
             firstAttempt: true,
             playable: true,
             nextable: false,
@@ -46,6 +52,7 @@ class Quiz extends React.Component{
             incorrectGuesses: [],
             correct: false,
         }
+        this.settings = React.createRef()
         console.log(this.state.correctnessDistribution)
     }
 
@@ -80,8 +87,12 @@ class Quiz extends React.Component{
                     const index = state.correctnessDistribution.findIndex(i => semitones === i.semitones)
                     state.correctnessDistribution[index].correct++
                     state.correctnessDistribution[index].percent = 100 * state.correctnessDistribution[index].correct / (state.correctnessDistribution[index].correct + state.correctnessDistribution[index].incorrect)
+                    if(state.correctInARow === 9){
+                        this.settings.current.increaseDifficulty()
+                    }
                     return {
                         numberCorrect: state.numberCorrect+1,
+                        correctInARow: (state.correctInARow > 8 ? 0 : state.correctInARow+1),
                         correctnessDistribution: state.correctnessDistribution,
                         numberOfQuestions: state.numberOfQuestions+1, 
                         nextable: true,
@@ -106,6 +117,7 @@ class Quiz extends React.Component{
                     state.correctnessDistribution[index].percent = 100 * state.correctnessDistribution[index].correct / (state.correctnessDistribution[index].correct + state.correctnessDistribution[index].incorrect)
                     return {
                         numberOfQuestions: state.numberOfQuestions+1, 
+                        correctInARow: 0,
                         firstAttempt: false,
                         incorrectGuesses: state.incorrectGuesses 
                     }    
@@ -157,7 +169,10 @@ class Quiz extends React.Component{
             <Layout>
                 <Layout.Header style={{textAlign: 'right'}}>
                     <Space>
-                        <Settings updateSettings={(settings) => {
+                        <Link to="/">
+                            <Button shape="round" icon={<LeftCircleOutlined />} />
+                        </Link>
+                        <Settings ref={this.settings} updateSettings={(settings) => {
                             console.log(settings)
                             interval.setProbability(interval.createProbabilityArr(settings.intervals))
                         }} /> 

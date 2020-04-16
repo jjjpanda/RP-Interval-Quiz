@@ -125,6 +125,24 @@ class Settings extends React.Component{
         })
     }
 
+    increaseDifficulty = () => {
+        for(let i of Settings.intervalDissonanceArr){
+            const pIndex = this.state.intervals.findIndex(o => o === i)
+            const nIndex = this.state.intervals.findIndex(o => o === -1 * i)
+            if(pIndex == -1){
+                this.onCheckChange({target: {checked: true}}, i)
+                break;
+            }
+            else if(nIndex == -1){
+                this.onCheckChange({target: {checked: true}}, -1 * i)
+                break;
+            }
+            else{
+                continue
+            }
+        }
+    }
+
     openModal = () => {
         this.setState(() => ({visible: true}))
     }
@@ -158,11 +176,11 @@ class Settings extends React.Component{
                     visible={this.state.visible}
                     footer={<Button onClick={this.closeModal} >Ok</Button>}
                 >
-                    <Space>
+                    {/* <Space>
                         Speed Mode:
                         <Switch checkedChildren="On" unCheckedChildren="Off" onChange={this.onSwitchChange} checked = {this.state.speed === 'on'} />
                         
-                    </Space>
+                    </Space> */}
 
                     <br />
 
