@@ -28,7 +28,7 @@ class Main extends React.Component{
 
     render() {
         return (
-            <Router basename="/RP-Interval-Quiz" >
+            <Router basename={window.location.pathname || ''} >
                 <Layout style={{ minHeight: '100vh' }}>
                     <Content>
                         <Route exact path="/" render={(props) => (<Start {...props} />)} />
