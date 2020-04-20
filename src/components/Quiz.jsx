@@ -184,40 +184,39 @@ class Quiz extends React.Component{
                 
                 <Layout.Content style={{textAlign: 'center'}}>
 
-                    <Space >
-                        {this.state.playing ? <SoundOutlined /> : <NotificationOutlined />}
-                    </Space>
+                    <Space direction={"vertical"}>
 
-                    <br />
-
-                    <Space direction={'horizontal'}>
-                        <Button shape="round" disabled={!this.state.playable} icon={this.state.firstPlay ? <PlayCircleOutlined /> : <RedoOutlined />} onClick={this.playInterval} />
-                        <Button shape="round" disabled={!this.state.nextable} icon={<ArrowRightOutlined />} onClick={this.nextInterval} />
-                    </Space>
-
-                    <br />
-
-                    <Space>
-                        <Space direction={"vertical"}>
-                            {this.renderAscendingButtons()}
+                        <Space >
+                            {this.state.playing ? <SoundOutlined /> : <NotificationOutlined />}
                         </Space>
-                        <Space direction={"vertical"}>
-                            {this.renderDescendingButtons()}
+
+                        <Space direction={'horizontal'}>
+                            <Button shape="round" disabled={!this.state.playable} icon={this.state.firstPlay ? <PlayCircleOutlined /> : <RedoOutlined />} onClick={this.playInterval} />
+                            <Button shape="round" disabled={!this.state.nextable} icon={<ArrowRightOutlined />} onClick={this.nextInterval} />
                         </Space>
+
+                        <Space>
+                            <Space direction={"vertical"}>
+                                {this.renderAscendingButtons()}
+                            </Space>
+                            <Space direction={"vertical"}>
+                                {this.renderDescendingButtons()}
+                            </Space>
+                        </Space>
+
+                        <Progress 
+                            percent={this.state.numberCorrect/this.state.numberOfQuestions*100} 
+                            showInfo={true} 
+                            type="circle" 
+                            format={p => `${Math.round(p*100)/100}% Correct`} 
+                            strokeColor={{
+                                '0%': '#108ee9',
+                                '100%': '#87d068',
+                            }}
+                        />
+
                     </Space>
 
-                    <br />
-
-                    <Progress 
-                        percent={this.state.numberCorrect/this.state.numberOfQuestions*100} 
-                        showInfo={true} 
-                        type="circle" 
-                        format={p => `${Math.round(p*100)/100}% Correct`} 
-                        strokeColor={{
-                            '0%': '#108ee9',
-                            '100%': '#87d068',
-                        }}
-                    />
                 </Layout.Content>
                 
             </Layout>

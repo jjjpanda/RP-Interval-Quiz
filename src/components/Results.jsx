@@ -4,14 +4,14 @@ import * as interval from '../lib/interval.js'
 
 import {
     Button,
-    Progress,
+    Typography,
     Table,
     Space,
     Modal
 } from 'antd'
 
 import {
-    PauseCircleOutlined
+    BarChartOutlined
 } from '@ant-design/icons'
 
 class Results extends React.Component{
@@ -66,12 +66,13 @@ class Results extends React.Component{
     render() {
         return (
             <div>
-                <Button shape="round" icon={<PauseCircleOutlined />} onClick={this.openModal} />
+                <Button shape="round" icon={<BarChartOutlined />} onClick={this.openModal} />
                 <Modal
                     closable={false}
                     visible={this.state.visible}
                     footer={<Button onClick={this.closeModal} >Ok</Button>}
                 >
+                    <Typography.Title level={2}>Results</Typography.Title>
                     <Table size={'small'} pagination={false} dataSource={[...this.props.results].reverse().filter(i => i.correct != 0 || i.incorrect != 0)} columns={this.columns} />
                 </Modal>
             </div>
