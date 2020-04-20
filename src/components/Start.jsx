@@ -27,7 +27,7 @@ class Start extends React.Component{
                 </Layout.Header>
                 <Layout.Content style={{textAlign: 'center'}}>
                     <Space direction="vertical">
-                        <Typography>RP Interval Quiz</Typography>
+                        <Typography.Title>RP Interval Quiz</Typography.Title>
                         <br />
                         <Button>
                             <Link to="/quiz">

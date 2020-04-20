@@ -6,6 +6,7 @@ import {
     Slider,
     Checkbox,
     Switch,
+    Typography,
     Space
 } from 'antd'
 
@@ -29,7 +30,7 @@ class Settings extends React.Component{
         this.state = {
             visible: false,
             direction: Cookies.get('direction') || 'up',
-            difficulty: Cookies.get('difficulty') || 6,
+            difficulty: parseInt(Cookies.get('difficulty')) || 6,
             intervals: cookieIntervals || Settings.intervalArr('up', 6),
             speed: Cookies.get('speed') || "off"
         };
@@ -176,31 +177,41 @@ class Settings extends React.Component{
                     visible={this.state.visible}
                     footer={<Button onClick={this.closeModal} >Ok</Button>}
                 >
-                    {/* <Space>
-                        Speed Mode:
-                        <Switch checkedChildren="On" unCheckedChildren="Off" onChange={this.onSwitchChange} checked = {this.state.speed === 'on'} />
-                        
-                    </Space> */}
 
-                    <br />
+                    <Typography.Title level={2}>Settings</Typography.Title>
 
-                    <Radio.Group onChange={this.onDirectionChange} value={this.state.direction}>
-                        <Radio value={'up'}>Ascending</Radio>
-                        <Radio value={'down'}>Descending</Radio>
-                        <Radio value={'both'}>Both</Radio>
-                    </Radio.Group>
+                    <Space direction={'vertical'}>
+                        <Typography>Direction</Typography>
+                        <Radio.Group onChange={this.onDirectionChange} value={this.state.direction}>
+                            <Radio value={'up'}>Ascending</Radio>
+                            <Radio value={'down'}>Descending</Radio>
+                            <Radio value={'both'}>Both</Radio>
+                        </Radio.Group>
+                        <Typography>Difficulty</Typography>
+                    </Space>
 
+                    
                     <Slider min={3} max={12} onChange={this.onDifficultyChange} value={this.state.difficulty} />
-
+                    
+                    {/* <Space>
+                        <Typography>Speed Mode:</Typography>
+                        <Switch checkedChildren="On" unCheckedChildren="Off" onChange={this.onSwitchChange} checked = {this.state.speed === 'on'} />
+                    </Space> */}
+                   
                     <br />
                     <hr />
                     <br /> 
 
-                    <Space direction={"vertical"}>
-                        {this.renderAscendingCheckbox()}
-                    </Space>
-                    <Space direction={"vertical"}>
-                        {this.renderDescendingCheckbox()}
+                    <Space direction={'vertical'}>
+                        <Typography>Intervals</Typography>
+                        <Space>
+                            <Space direction={"vertical"}>
+                                {this.renderAscendingCheckbox()}
+                            </Space>
+                            <Space direction={"vertical"}>
+                                {this.renderDescendingCheckbox()}
+                            </Space>
+                        </Space>
                     </Space>
 
                 </Modal>
