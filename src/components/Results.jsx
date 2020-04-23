@@ -7,7 +7,9 @@ import {
     Typography,
     Table,
     Space,
-    Modal
+    Modal,
+    Popover,
+    Progress
 } from 'antd'
 
 import {
@@ -65,17 +67,31 @@ class Results extends React.Component{
 
     render() {
         return (
-            <div>
+            <Popover content = {<Typography>Results</Typography>} title={null} trigger="hover">
                 <Button shape="round" icon={<BarChartOutlined />} onClick={this.openModal} />
                 <Modal
                     closable={false}
                     visible={this.state.visible}
                     footer={<Button onClick={this.closeModal} >Ok</Button>}
+                    maskClosable
                 >
                     <Typography.Title level={2}>Results</Typography.Title>
+                    <Typography>
+                        {`Correct: ${this.props.numberCorrect}/${this.props.numberOfQuestions}`}
+                    </Typography>
+                    <Progress
+                        percent={this.props.numberCorrect/this.props.numberOfQuestions*100}
+                        showInfo={false} 
+                        type="line"
+                        strokeColor={{
+                            '0%': '#108ee9',
+                            '100%': '#87d068',
+                        }}
+                        trailColor={"#dddddd"}
+                    />
                     <Table size={'small'} pagination={false} dataSource={[...this.props.results].reverse().filter(i => i.correct != 0 || i.incorrect != 0)} columns={this.columns} />
                 </Modal>
-            </div>
+            </Popover>
         )
     }
 }
