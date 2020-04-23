@@ -1,7 +1,7 @@
 import React from 'react'
 import {
     BrowserRouter as Router,
-    Link,
+    Redirect,
     Route,
     withRouter,
 } from 'react-router-dom';
@@ -12,6 +12,9 @@ import {
     Progress,
     Layout,
     Space,
+    Popconfirm,
+    Popover,
+    Typography
 } from 'antd'
 
 import {
@@ -51,17 +54,20 @@ class Quiz extends React.Component{
             correctnessDistribution: interval.currentDistribution(),
             incorrectGuesses: [],
             correct: false,
+            goBack: false
         }
         this.settings = React.createRef()
         console.log(this.state.correctnessDistribution)
     }
 
     playInterval = () => {
-        this.setState(() => ({ playing: true }), () => {
-            interval.playInterval(this.state.currentRoot, interval.findInterval(this.state.currentInterval).ratio, () => {
-                this.setState(() => ({ playing: false, firstPlay: false }))
-            })
-        })
+        if(!this.state.playing) {
+           this.setState(() => ({ playing: true }), () => {
+                interval.playInterval(this.state.currentRoot, interval.findInterval(this.state.currentInterval).ratio, () => {
+                    this.setState(() => ({ playing: false, firstPlay: false }))
+                })
+            })  
+        }
     }
 
     nextInterval = () => {
@@ -75,7 +81,7 @@ class Quiz extends React.Component{
             incorrectGuesses: [],
             correct: false
         }), () =>{
-            
+            this.playInterval()
         })
     }
 
@@ -134,29 +140,16 @@ class Quiz extends React.Component{
         }
     }
 
-    renderAscendingButtons(){
-        return [...interval.intervals].slice(12,24).map(i => {
+    renderButtons(isAscending){
+        const sIndex = isAscending ? 12 : 0;
+        return [...interval.intervals].slice(sIndex,sIndex+12).reverse().map(i => {
             return (
                 <Button 
                     danger={this.state.incorrectGuesses.includes(i.semitones)} 
                     shape="round" 
                     icon={this.state.incorrectGuesses.includes(i.semitones) ? <CloseOutlined /> : (this.state.correct && i.semitones === this.state.currentInterval ? <CheckOutlined /> : (i.direction === 'ascending' ? <CaretUpOutlined /> : <CaretDownOutlined /> ))} 
                     onClick={() => {this.sendAnswer(i.semitones)}}
-                >
-                    {i.name}
-                </Button>
-            )
-        })
-    }
-
-    renderDescendingButtons(){
-        return [...interval.intervals].slice(0,12).reverse().map(i => {
-            return (
-                <Button 
-                    danger={this.state.incorrectGuesses.includes(i.semitones)} 
-                    shape="round" 
-                    icon={this.state.incorrectGuesses.includes(i.semitones) ? <CloseOutlined /> : (this.state.correct && i.semitones === this.state.currentInterval ? <CheckOutlined /> : (i.direction === 'ascending' ? <CaretUpOutlined /> : <CaretDownOutlined /> ))} 
-                    onClick={() => {this.sendAnswer(i.semitones)}}
+                    style={this.state.correct && i.semitones === this.state.currentInterval ? { color: "green", borderColor: "green" } : {}}
                 >
                     {i.name}
                 </Button>
@@ -167,27 +160,43 @@ class Quiz extends React.Component{
     render() {
         return (
             <Layout>
-                <Layout.Header style={{textAlign: 'right'}}>
-                    <Space>
-                        <Link to="/">
-                            <Button shape="round" icon={<LeftCircleOutlined />} />
-                        </Link>
-                        <Settings ref={this.settings} updateSettings={(settings) => {
-                            console.log(settings)
-                            interval.setProbability(interval.createProbabilityArr(settings.intervals))
-                        }} /> 
-                        <Results 
-                            results = {this.state.correctnessDistribution}
-                        />
-                    </Space>
+                <Layout.Header>
+                    <span>
+                        <div style={{float: 'left', display: 'inline-block'}}>
+                            <Popover content = {<Typography>Back</Typography>} title={null} trigger="hover"> 
+                                <Popconfirm
+                                    title="You sure? Your test progress will be erased."
+                                    onConfirm={() => {this.setState(() => ({goBack: true}))}}
+                                    onCancel={() => {this.setState(() => ({goBack: false}))}}
+                                    okText = {'yes'}
+                                    cancelText = {'no'}
+                                    placement={'bottomLeft'}
+                                >
+                                    {this.state.goBack ? <Redirect to="/" /> : null}
+                                    <Button shape="round" icon={<LeftCircleOutlined />} />
+                                </Popconfirm>
+                            </Popover>
+                        </div>
+                        <div style={{float: 'right', display: 'inline-block'}}>
+                            <Settings ref={this.settings} updateSettings={(settings) => {
+                                console.log(settings)
+                                interval.setProbability(interval.createProbabilityArr(settings.intervals))
+                            }} /> 
+                            <Results 
+                                results = {this.state.correctnessDistribution}
+                                numberCorrect = {this.state.numberCorrect}
+                                numberOfQuestions={this.state.numberOfQuestions}
+                            /> 
+                        </div>
+                    </span>
                 </Layout.Header>
                 
                 <Layout.Content style={{textAlign: 'center'}}>
 
                     <Space direction={"vertical"}>
-
+                        
                         <Space >
-                            {this.state.playing ? <SoundOutlined /> : <NotificationOutlined />}
+                            {this.state.playing ? <SoundOutlined style={{ fontSize: '16px' }}/> : <NotificationOutlined style={{ fontSize: '16px' }}/>}
                         </Space>
 
                         <Space direction={'horizontal'}>
@@ -195,25 +204,40 @@ class Quiz extends React.Component{
                             <Button shape="round" disabled={!this.state.nextable} icon={<ArrowRightOutlined />} onClick={this.nextInterval} />
                         </Space>
 
-                        <Space>
-                            <Space direction={"vertical"}>
-                                {this.renderAscendingButtons()}
-                            </Space>
-                            <Space direction={"vertical"}>
-                                {this.renderDescendingButtons()}
-                            </Space>
-                        </Space>
-
-                        <Progress 
-                            percent={this.state.numberCorrect/this.state.numberOfQuestions*100} 
-                            showInfo={true} 
-                            type="circle" 
-                            format={p => `${Math.round(p*100)/100}% Correct`} 
+                        {/* <Typography>
+                            {`${Math.round( 
+                                this.state.numberCorrect/this.state.numberOfQuestions*100 
+                            *100)/100}% Correct`}
+                        </Typography> */}
+                        <Typography>
+                            {`Correct: ${this.state.numberCorrect}/${this.state.numberOfQuestions}`}
+                        </Typography>
+                        <Progress
+                            percent={this.state.numberCorrect/this.state.numberOfQuestions*100}
+                            showInfo={false} 
+                            type="line"
                             strokeColor={{
                                 '0%': '#108ee9',
                                 '100%': '#87d068',
                             }}
+                            trailColor={"#dddddd"}
                         />
+
+
+                        <Space>
+                            <div style={{textAlign: 'left'}}>
+                                <Space direction={"vertical"}>
+                                    <Typography>Ascending</Typography>
+                                    {this.renderButtons(true)}
+                                </Space>
+                            </div>
+                            <div style={{textAlign: 'left'}}>
+                                <Space direction={"vertical"}>
+                                    <Typography>Descending</Typography>
+                                    {this.renderButtons(false)}
+                                </Space>
+                            </div>
+                        </Space>
 
                     </Space>
 

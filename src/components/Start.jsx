@@ -9,7 +9,8 @@ import {
     Button,
     Layout,
     Space,
-    Typography
+    Typography,
+    PageHeader
 } from 'antd'
 
 import * as interval from '../lib/interval.js'
@@ -25,11 +26,12 @@ class Start extends React.Component{
                         interval.setProbability(interval.createProbabilityArr(settings.intervals))
                     }} />  
                 </Layout.Header>
-                <Layout.Content style={{textAlign: 'center'}}>
+                
+                <Layout.Content style={{textAlign: 'center', verticalAlign: 'middle'}}>
+                    <br/>
                     <Space direction="vertical">
                         <Typography.Title>RP Interval Quiz</Typography.Title>
-                        <br />
-                        <Button>
+                        <Button type="primary">
                             <Link to="/quiz">
                                 Start
                             </Link>

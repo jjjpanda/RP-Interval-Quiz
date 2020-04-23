@@ -7,7 +7,8 @@ import {
     Checkbox,
     Switch,
     Typography,
-    Space
+    Space,
+    Popover
 } from 'antd'
 
 import {
@@ -152,42 +153,37 @@ class Settings extends React.Component{
         this.setState(() => ({visible: false}))
     }
 
-    renderAscendingCheckbox() {
-        return [...interval.intervals].slice(12,24).map(i => {
+    renderCheckbox(isAscending){
+        const sIndex = isAscending ? 12 : 0;
+        return [...interval.intervals].slice(sIndex,sIndex+12).reverse().map(i => {
             return (
-                <Checkbox onChange= {(e) => {this.onCheckChange(e,i.semitones)}} checked={this.state.intervals.includes(i.semitones)} >{`${i.direction} ${i.name}`}</Checkbox>
+                <Checkbox onChange= {(e) => {this.onCheckChange(e,i.semitones)}} checked={this.state.intervals.includes(i.semitones)} >{`${i.name}`}</Checkbox>
             )
         })
     }
-
-    renderDescendingCheckbox() {
-        return [...interval.intervals].slice(0,12).reverse().map(i => {
-            return (
-                <Checkbox onChange= {(e) => {this.onCheckChange(e,i.semitones)}} checked={this.state.intervals.includes(i.semitones)} >{`${i.direction} ${i.name}`}</Checkbox>
-            )
-        })
-    }   
     
     render() {
         return (
-            <div>
+            <Popover content = {<Typography>Settings</Typography>} title={null} trigger="hover" >
                 <Button shape="round" icon={<SettingOutlined />} onClick={this.openModal} />
                 <Modal
                     closable={false}
                     visible={this.state.visible}
                     footer={<Button onClick={this.closeModal} >Ok</Button>}
+                    style={{textAlign: 'center'}}
+                    maskClosable
                 >
 
                     <Typography.Title level={2}>Settings</Typography.Title>
 
                     <Space direction={'vertical'}>
-                        <Typography>Direction</Typography>
+                        <Typography.Text strong>Direction</Typography.Text>
                         <Radio.Group onChange={this.onDirectionChange} value={this.state.direction}>
                             <Radio value={'up'}>Ascending</Radio>
                             <Radio value={'down'}>Descending</Radio>
                             <Radio value={'both'}>Both</Radio>
                         </Radio.Group>
-                        <Typography>Difficulty</Typography>
+                        <Typography.Text strong>Difficulty</Typography.Text>
                     </Space>
 
                     
@@ -203,19 +199,25 @@ class Settings extends React.Component{
                     <br /> 
 
                     <Space direction={'vertical'}>
-                        <Typography>Intervals</Typography>
+                        <Typography.Text strong>Intervals</Typography.Text>
                         <Space>
-                            <Space direction={"vertical"}>
-                                {this.renderAscendingCheckbox()}
-                            </Space>
-                            <Space direction={"vertical"}>
-                                {this.renderDescendingCheckbox()}
-                            </Space>
+                            <div style={{textAlign: 'left'}}>
+                                 <Space direction={"vertical"}>
+                                    <Typography>Ascending</Typography>
+                                    {this.renderCheckbox(true)}
+                                </Space>
+                            </div>
+                            <div style={{textAlign: 'left'}}>
+                                <Space direction={"vertical"}>
+                                    <Typography>Descending</Typography>
+                                    {this.renderCheckbox(false)}
+                                </Space>
+                            </div>
                         </Space>
                     </Space>
 
                 </Modal>
-            </div>
+            </Popover>
         )
     }
 }
