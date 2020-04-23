@@ -12,7 +12,8 @@ import {
 } from 'antd'
 
 import {
-    SettingOutlined
+    SettingOutlined,
+    InfoCircleOutlined
 } from '@ant-design/icons'
 
 import Cookies from 'js-cookie'
@@ -186,8 +187,13 @@ class Settings extends React.Component{
                                     <Radio value={'both'}>Both</Radio>
                                 </Radio.Group>
                             </Space>
-                            <Space direction={'vertical'} style={{textAlign: 'left'}}>
-                                <Typography.Text strong>Speed Mode</Typography.Text>
+                            <Space direction={'vertical'} style={{textAlign: 'left'}}> 
+                                <Space>
+                                    <Typography.Text strong>Speed Mode</Typography.Text>
+                                    <Popover content = {<Typography>{`Next interval will play automatically\n once you get the correct answer.`}</Typography>} title={null} trigger="hover">
+                                        <InfoCircleOutlined />
+                                    </Popover>
+                                </Space>
                                 <Switch checkedChildren="On" unCheckedChildren="Off" onChange={this.onSwitchChange} checked = {this.state.speed === 'on'} />
                             </Space>
                         </Space>
@@ -204,7 +210,13 @@ class Settings extends React.Component{
 
                     <div style={{textAlign: 'center'}}>
                         <Space direction={'vertical'} >
-                            <Typography.Text strong>Intervals</Typography.Text>
+                            <Space>
+                               <Typography.Text strong>Intervals</Typography.Text>
+                                <Popover content = {<Typography>{`Select custom intervals you want to add/remove.`}</Typography>} title={null} trigger="hover">
+                                    <InfoCircleOutlined />
+                                </Popover> 
+                            </Space>
+                            
                             <Space>
                                 <div style={{textAlign: 'left'}}>
                                     <Space direction={"vertical"}>
