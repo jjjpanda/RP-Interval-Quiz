@@ -14,7 +14,8 @@ import {
     Space,
     Popconfirm,
     Popover,
-    Typography
+    Typography,
+    message
 } from 'antd'
 
 import {
@@ -54,7 +55,8 @@ class Quiz extends React.Component{
             correctnessDistribution: interval.currentDistribution(),
             incorrectGuesses: [],
             correct: false,
-            goBack: false
+            goBack: false,
+            speed: false,
         }
         this.settings = React.createRef()
         console.log(this.state.correctnessDistribution)
@@ -86,6 +88,7 @@ class Quiz extends React.Component{
     }
 
     sendAnswer = (semitones) => {
+        console.log(this.state)
         console.log(semitones)
         if(semitones === this.state.currentInterval){
             if(this.state.firstAttempt){
@@ -93,25 +96,38 @@ class Quiz extends React.Component{
                     const index = state.correctnessDistribution.findIndex(i => semitones === i.semitones)
                     state.correctnessDistribution[index].correct++
                     state.correctnessDistribution[index].percent = 100 * state.correctnessDistribution[index].correct / (state.correctnessDistribution[index].correct + state.correctnessDistribution[index].incorrect)
-                    if(state.correctInARow === 9){
+                    if(state.correctInARow === 6){
                         this.settings.current.increaseDifficulty()
+                        message.success('Difficulty Increased');
                     }
                     return {
                         numberCorrect: state.numberCorrect+1,
-                        correctInARow: (state.correctInARow > 8 ? 0 : state.correctInARow+1),
+                        correctInARow: (state.correctInARow >= 6 ? 0 : state.correctInARow+1),
                         correctnessDistribution: state.correctnessDistribution,
                         numberOfQuestions: state.numberOfQuestions+1, 
                         nextable: true,
                         firstAttempt: false,
                         correct: true,
                     }
+                }, () => {
+                    setTimeout(() => {
+                        if(this.state.speed){
+                            this.nextInterval()
+                        }
+                    }, 500)
                 })
             }
             else{
                 this.setState((state) => ({
                     nextable: true,
                     correct: true,
-                }))
+                }), () => {
+                    setTimeout(() => {
+                        if(this.state.speed){
+                            this.nextInterval()
+                        }
+                    }, 500)
+                })
             }
         }
         else{
@@ -178,15 +194,16 @@ class Quiz extends React.Component{
                             </Popover>
                         </div>
                         <div style={{float: 'right', display: 'inline-block'}}>
-                            <Settings ref={this.settings} updateSettings={(settings) => {
-                                console.log(settings)
-                                interval.setProbability(interval.createProbabilityArr(settings.intervals))
-                            }} /> 
                             <Results 
                                 results = {this.state.correctnessDistribution}
                                 numberCorrect = {this.state.numberCorrect}
                                 numberOfQuestions={this.state.numberOfQuestions}
                             /> 
+                            <Settings ref={this.settings} updateSettings={(settings) => {
+                                this.setState(() => ({speed: settings.speed}))
+                                console.log(settings)
+                                interval.setProbability(interval.createProbabilityArr(settings.intervals))
+                            }} /> 
                         </div>
                     </span>
                 </Layout.Header>

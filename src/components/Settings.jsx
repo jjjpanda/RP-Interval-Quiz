@@ -128,6 +128,7 @@ class Settings extends React.Component{
     }
 
     increaseDifficulty = () => {
+        console.log("IncREASE", this.state.intervals)
         for(let i of Settings.intervalDissonanceArr){
             const pIndex = this.state.intervals.findIndex(o => o === i)
             const nIndex = this.state.intervals.findIndex(o => o === -1 * i)
@@ -177,22 +178,26 @@ class Settings extends React.Component{
                     <Typography.Title level={2}>Settings</Typography.Title>
 
                     <Space direction={'vertical'}>
-                        <Typography.Text strong>Direction</Typography.Text>
-                        <Radio.Group onChange={this.onDirectionChange} value={this.state.direction}>
-                            <Radio value={'up'}>Ascending</Radio>
-                            <Radio value={'down'}>Descending</Radio>
-                            <Radio value={'both'}>Both</Radio>
-                        </Radio.Group>
-                        <Typography.Text strong>Difficulty</Typography.Text>
-                    </Space>
+                        <Space>
+                            <Space direction={'vertical'} style={{textAlign: 'left'}}>
+                                <Typography.Text strong>Direction</Typography.Text>
+                                <Radio.Group onChange={this.onDirectionChange} value={this.state.direction}>
+                                    <Radio value={'up'}>Ascending</Radio>
+                                    <Radio value={'down'}>Descending</Radio>
+                                    <Radio value={'both'}>Both</Radio>
+                                </Radio.Group>
+                            </Space>
+                            <Space direction={'vertical'} style={{textAlign: 'right'}}>
+                                <Typography.Text strong>Speed Mode</Typography.Text>
+                                <Switch checkedChildren="On" unCheckedChildren="Off" onChange={this.onSwitchChange} checked = {this.state.speed === 'on'} />
+                            </Space>
+                        </Space>
 
-                    
-                    <Slider min={3} max={12} onChange={this.onDifficultyChange} value={this.state.difficulty} />
-                    
-                    {/* <Space>
-                        <Typography>Speed Mode:</Typography>
-                        <Switch checkedChildren="On" unCheckedChildren="Off" onChange={this.onSwitchChange} checked = {this.state.speed === 'on'} />
-                    </Space> */}
+                        <div>
+                            <Typography.Text strong>Difficulty</Typography.Text>
+                            <Slider min={3} max={12} onChange={this.onDifficultyChange} value={this.state.difficulty} />
+                        </div>
+                    </Space>
                    
                     <br />
                     <hr />
