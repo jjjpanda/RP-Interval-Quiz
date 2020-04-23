@@ -171,7 +171,6 @@ class Settings extends React.Component{
                     closable={false}
                     visible={this.state.visible}
                     footer={<Button onClick={this.closeModal} >Ok</Button>}
-                    style={{textAlign: 'center'}}
                     maskClosable
                 >
 
@@ -187,7 +186,7 @@ class Settings extends React.Component{
                                     <Radio value={'both'}>Both</Radio>
                                 </Radio.Group>
                             </Space>
-                            <Space direction={'vertical'} style={{textAlign: 'right'}}>
+                            <Space direction={'vertical'} style={{textAlign: 'left'}}>
                                 <Typography.Text strong>Speed Mode</Typography.Text>
                                 <Switch checkedChildren="On" unCheckedChildren="Off" onChange={this.onSwitchChange} checked = {this.state.speed === 'on'} />
                             </Space>
@@ -203,23 +202,26 @@ class Settings extends React.Component{
                     <hr />
                     <br /> 
 
-                    <Space direction={'vertical'}>
-                        <Typography.Text strong>Intervals</Typography.Text>
-                        <Space>
-                            <div style={{textAlign: 'left'}}>
-                                 <Space direction={"vertical"}>
-                                    <Typography>Ascending</Typography>
-                                    {this.renderCheckbox(true)}
-                                </Space>
-                            </div>
-                            <div style={{textAlign: 'left'}}>
-                                <Space direction={"vertical"}>
-                                    <Typography>Descending</Typography>
-                                    {this.renderCheckbox(false)}
-                                </Space>
-                            </div>
+                    <div style={{textAlign: 'center'}}>
+                        <Space direction={'vertical'} >
+                            <Typography.Text strong>Intervals</Typography.Text>
+                            <Space>
+                                <div style={{textAlign: 'left'}}>
+                                    <Space direction={"vertical"}>
+                                        <Typography>Ascending</Typography>
+                                        {this.renderCheckbox(true)}
+                                    </Space>
+                                </div>
+                                <div style={{textAlign: 'left'}}>
+                                    <Space direction={"vertical"}>
+                                        <Typography>Descending</Typography>
+                                        {this.renderCheckbox(false)}
+                                    </Space>
+                                </div>
+                            </Space>
                         </Space>
-                    </Space>
+                    </div>
+                   
 
                 </Modal>
             </Popover>
