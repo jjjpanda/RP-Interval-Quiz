@@ -111,7 +111,7 @@ class Quiz extends React.Component{
                     }
                 }, () => {
                     setTimeout(() => {
-                        if(this.state.speed){
+                        if(this.state.speed === 'on'){
                             this.nextInterval()
                         }
                     }, 500)
@@ -123,7 +123,7 @@ class Quiz extends React.Component{
                     correct: true,
                 }), () => {
                     setTimeout(() => {
-                        if(this.state.speed){
+                        if(this.state.speed === 'on'){
                             this.nextInterval()
                         }
                     }, 500)
