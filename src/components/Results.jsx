@@ -70,9 +70,10 @@ class Results extends React.Component{
             <Popover content = {<Typography>Results</Typography>} title={null} trigger="hover">
                 <Button shape="round" icon={<BarChartOutlined />} onClick={this.openModal} />
                 <Modal
-                    closable={false}
+                    closable={true}
                     visible={this.state.visible}
                     footer={<Button onClick={this.closeModal} >Ok</Button>}
+                    onCancel={this.closeModal}
                     maskClosable
                 >
                     <Typography.Title level={2}>Results</Typography.Title>

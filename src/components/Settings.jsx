@@ -111,7 +111,19 @@ class Settings extends React.Component{
             else{
                 state.intervals = state.intervals.filter(i => i != semitones)
             }
-            return { intervals: state.intervals }
+
+            let dir;
+            if(state.intervals.every(i => Math.sign(i) === 1)){
+                dir = "up"
+            }
+            else if(state.intervals.every(i => Math.sign(i) === -1)){
+                dir = "down"
+            }
+            else {
+                dir = 'both'
+            }
+
+            return { intervals: state.intervals, direction: dir, difficulty: Math.ceil(state.intervals.length / 2) }
         }, () => {
             Cookies.set('intervals', this.state.intervals, { expires: 21 })
             this.props.updateSettings(this.state)
@@ -169,16 +181,17 @@ class Settings extends React.Component{
             <Popover content = {<Typography>Settings</Typography>} title={null} trigger="hover" >
                 <Button shape="round" icon={<SettingOutlined />} onClick={this.openModal} />
                 <Modal
-                    closable={false}
+                    closable={true}
                     visible={this.state.visible}
                     footer={<Button onClick={this.closeModal} >Ok</Button>}
+                    onCancel={this.closeModal}
                     maskClosable
                 >
 
                     <Typography.Title level={2}>Settings</Typography.Title>
 
-                    <Space direction={'vertical'}>
-                        <Space>
+                    <Space direction={'vertical'} style={{width: "100%"}}>
+                        <Space style={{width: "100%"}}>
                             <Space direction={'vertical'} style={{textAlign: 'left'}}>
                                 <Typography.Text strong>Direction</Typography.Text>
                                 <Radio.Group onChange={this.onDirectionChange} value={this.state.direction}>
@@ -200,7 +213,7 @@ class Settings extends React.Component{
 
                         <div>
                             <Typography.Text strong>Difficulty</Typography.Text>
-                            <Slider min={3} max={12} onChange={this.onDifficultyChange} value={this.state.difficulty} />
+                            <Slider min={1} max={12} onChange={this.onDifficultyChange} value={this.state.difficulty} />
                         </div>
                     </Space>
                    
