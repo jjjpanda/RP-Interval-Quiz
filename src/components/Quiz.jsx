@@ -221,11 +221,6 @@ class Quiz extends React.Component{
                                 <Button shape="round" disabled={!this.state.nextable} icon={<ArrowRightOutlined />} onClick={this.nextInterval} />
                             </Space>
 
-                            {/* <Typography>
-                                {`${Math.round( 
-                                    this.state.numberCorrect/this.state.numberOfQuestions*100 
-                                *100)/100}% Correct`}
-                            </Typography> */}
                             <Typography>
                                 {`Correct: ${this.state.numberCorrect}/${this.state.numberOfQuestions}`}
                             </Typography>
