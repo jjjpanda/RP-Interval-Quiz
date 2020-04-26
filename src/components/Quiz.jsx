@@ -56,7 +56,7 @@ class Quiz extends React.Component{
             incorrectGuesses: [],
             correct: false,
             goBack: false,
-            speed: false,
+            speed: false
         }
         this.settings = React.createRef()
         console.log(this.state.correctnessDistribution)
@@ -172,10 +172,11 @@ class Quiz extends React.Component{
             )
         })
     }
+
         
     render() {
         return (
-            <Layout>
+            <Layout style={{ minHeight: '100vh', height:'100vh' }}>
                 <Layout.Header>
                     <span>
                         <div style={{float: 'left', display: 'inline-block'}}>
@@ -209,55 +210,53 @@ class Quiz extends React.Component{
                 </Layout.Header>
                 
                 <Layout.Content style={{textAlign: 'center'}}>
+                    
+                        <Space direction={"vertical"} style={{ transform: `scale(${1.3})`, transformOrigin: 'top'}} >
+                            <Space >
+                                {this.state.playing ? <SoundOutlined style={{ fontSize: '16px' }}/> : <NotificationOutlined style={{ fontSize: '16px' }}/>}
+                            </Space>
 
-                    <Space direction={"vertical"}>
-                        
-                        <Space >
-                            {this.state.playing ? <SoundOutlined style={{ fontSize: '16px' }}/> : <NotificationOutlined style={{ fontSize: '16px' }}/>}
+                            <Space direction={'horizontal'}>
+                                <Button shape="round" disabled={!this.state.playable} icon={this.state.firstPlay ? <PlayCircleOutlined /> : <RedoOutlined />} onClick={this.playInterval} />
+                                <Button shape="round" disabled={!this.state.nextable} icon={<ArrowRightOutlined />} onClick={this.nextInterval} />
+                            </Space>
+
+                            {/* <Typography>
+                                {`${Math.round( 
+                                    this.state.numberCorrect/this.state.numberOfQuestions*100 
+                                *100)/100}% Correct`}
+                            </Typography> */}
+                            <Typography>
+                                {`Correct: ${this.state.numberCorrect}/${this.state.numberOfQuestions}`}
+                            </Typography>
+                            <Progress
+                                percent={this.state.numberCorrect/this.state.numberOfQuestions*100}
+                                showInfo={false} 
+                                type="line"
+                                strokeColor={{
+                                    '0%': '#108ee9',
+                                    '100%': '#87d068',
+                                }}
+                                trailColor={"#dddddd"}
+                            />
+
+
+                            <Space>
+                                <div style={{textAlign: 'left'}}>
+                                    <Space direction={"vertical"}>
+                                        <Typography>Ascending</Typography>
+                                        {this.renderButtons(true)}
+                                    </Space>
+                                </div>
+                                <div style={{textAlign: 'left'}}>
+                                    <Space direction={"vertical"}>
+                                        <Typography>Descending</Typography>
+                                        {this.renderButtons(false)}
+                                    </Space>
+                                </div>
+                            </Space>                           
                         </Space>
-
-                        <Space direction={'horizontal'}>
-                            <Button shape="round" disabled={!this.state.playable} icon={this.state.firstPlay ? <PlayCircleOutlined /> : <RedoOutlined />} onClick={this.playInterval} />
-                            <Button shape="round" disabled={!this.state.nextable} icon={<ArrowRightOutlined />} onClick={this.nextInterval} />
-                        </Space>
-
-                        {/* <Typography>
-                            {`${Math.round( 
-                                this.state.numberCorrect/this.state.numberOfQuestions*100 
-                            *100)/100}% Correct`}
-                        </Typography> */}
-                        <Typography>
-                            {`Correct: ${this.state.numberCorrect}/${this.state.numberOfQuestions}`}
-                        </Typography>
-                        <Progress
-                            percent={this.state.numberCorrect/this.state.numberOfQuestions*100}
-                            showInfo={false} 
-                            type="line"
-                            strokeColor={{
-                                '0%': '#108ee9',
-                                '100%': '#87d068',
-                            }}
-                            trailColor={"#dddddd"}
-                        />
-
-
-                        <Space>
-                            <div style={{textAlign: 'left'}}>
-                                <Space direction={"vertical"}>
-                                    <Typography>Ascending</Typography>
-                                    {this.renderButtons(true)}
-                                </Space>
-                            </div>
-                            <div style={{textAlign: 'left'}}>
-                                <Space direction={"vertical"}>
-                                    <Typography>Descending</Typography>
-                                    {this.renderButtons(false)}
-                                </Space>
-                            </div>
-                        </Space>
-
-                    </Space>
-
+                    
                 </Layout.Content>
                 
             </Layout>

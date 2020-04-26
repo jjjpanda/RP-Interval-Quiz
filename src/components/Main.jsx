@@ -29,7 +29,7 @@ class Main extends React.Component{
     render() {
         return (
             <Router basename={'/RP-Interval-Quiz'} >
-                <Layout style={{ minHeight: '100vh' }}>
+                <Layout style={{ minHeight: '100vh', height:'100vh' }}>
                     <Content>
                         <Route exact path="/" render={(props) => (<Start {...props} />)} />
                         <Route exact path="/quiz" render={(props) => (<Quiz {...props} />)} />
