@@ -211,7 +211,7 @@ class Quiz extends React.Component{
                 
                 <Layout.Content style={{textAlign: 'center'}}>
                     
-                        <Space direction={"vertical"} style={{ transform: `scale(${1.3})`, transformOrigin: 'top'}} >
+                        <Space direction={"vertical"} /* style={{ transform: `scale(${1.3})`, transformOrigin: 'top'}} */ >
                             <Space >
                                 {this.state.playing ? <SoundOutlined style={{ fontSize: '16px' }}/> : <NotificationOutlined style={{ fontSize: '16px' }}/>}
                             </Space>
