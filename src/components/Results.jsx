@@ -77,9 +77,20 @@ class Results extends React.Component{
                     maskClosable
                 >
                     <Typography.Title level={2}>Results</Typography.Title>
-                    <Typography>
-                        {`Correct: ${this.props.numberCorrect}/${this.props.numberOfQuestions}`}
-                    </Typography>
+                    <span>
+                        <div style={{float: 'left', display: 'inline-block'}}>
+                            <Typography>
+                                {`Correct: ${this.props.numberCorrect}/${this.props.numberOfQuestions}`}
+                            </Typography>
+                        </div>
+                        <div style={{float: 'right', display: 'inline-block'}}>
+                            <Typography>
+                                {`${Math.round( 
+                                    this.props.numberCorrect/this.props.numberOfQuestions*100 
+                                *100)/100}% Correct`}
+                            </Typography>
+                        </div>
+                    </span>
                     <Progress
                         percent={this.props.numberCorrect/this.props.numberOfQuestions*100}
                         showInfo={false} 
