@@ -37,7 +37,7 @@ class Start extends React.Component{
                             </Link>
                         </Button>
 
-                        <img src="/img/notes.png" />
+                        <img src="img/notes.png" />
                     </Space>
                     
                 </Layout.Content>
