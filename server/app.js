@@ -10,8 +10,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // HTML Calls
-app.use('/css', express.static(path.join(__dirname, '../src/css')));
-app.use('/img', express.static(path.join(__dirname, '../src/img')));
+app.use('/RP-Interval-Quiz/css', express.static(path.join(__dirname, '../src/css')));
+app.use('/RP-Interval-Quiz/img', express.static(path.join(__dirname, '../docs/img')));
 
 const knownPaths = ['/RP-Interval-Quiz/', '/RP-Interval-Quiz/quiz'];
 for (const webPath of knownPaths) {
