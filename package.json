@@ -7,8 +7,7 @@
     "start": "npm run build && npm run server",
     "server": "node ./server/server.js",
     "build": "npx webpack --progress",
-    "buildCont": "npx webpack --progress --watch",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "buildCont": "npx webpack --progress --watch"
   },
   "dependencies": {
     "@ant-design/icons": "^4.0.6",
